@@ -5,29 +5,29 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.input.KeyboardType
-import java.lang.reflect.Modifier
 
 @Composable
 fun CaixaDeEntrada(
-    modifier: Modifier,
+    modifier: androidx.compose.ui.Modifier,
     label: String,
     placeholder: String,
     keyboardType: KeyboardType,
     value: String,
-    atualizarValor: (String) -> Unit
+    atualizarValor: () -> Unit
 ) {
-    OutlinedTextField(
-        modifier = modifier,
-        label = {
-            Text(text = label)
-        },
-        placeholder = {
-            Text(text = placeholder)
-        },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = keyboardType
-        ),
-        value = value,
-        onValueChange = {}
-    )
+//    OutlinedTextField(
+//        modifier = modifier,
+//        label = {
+//            Text(text = label)
+//        },
+//        placeholder = {
+//            Text(text = placeholder)
+//        },
+//        keyboardOptions = KeyboardOptions(
+//            keyboardType = keyboardType
+//        ),
+//        onValueChange = {
+//                atualizarValor(it)
+//        }
+//    )
 }
