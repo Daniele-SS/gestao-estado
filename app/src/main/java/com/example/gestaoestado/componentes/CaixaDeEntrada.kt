@@ -15,19 +15,11 @@ fun CaixaDeEntrada(
     value: String,
     atualizarValor: () -> Unit
 ) {
-//    OutlinedTextField(
-//        modifier = modifier,
-//        label = {
-//            Text(text = label)
-//        },
-//        placeholder = {
-//            Text(text = placeholder)
-//        },
-//        keyboardOptions = KeyboardOptions(
-//            keyboardType = keyboardType
-//        ),
-//        onValueChange = {
-//                atualizarValor(it)
-//        }
-//    )
+    OutlinedTextField(
+        value = value,
+        onValueChange = {atualizarValor(it)},
+        label = {Text(text = label)},
+        placeholder = {Text(text = placeholder)},
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
+    )
 }

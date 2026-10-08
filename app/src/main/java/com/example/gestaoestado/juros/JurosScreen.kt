@@ -18,10 +18,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,33 +27,27 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.gestaoestado.calculos.calcularJuros
-import com.example.gestaoestado.calculos.calcularMontante
 import com.example.gestaoestado.componentes.CaixaDeEntrada
 
 @Composable
-fun JurosScreen(modifier: Modifier) {
-    @Composable
-    fun JurosScreen(modifier: Modifier = Modifier, atualizarValor: (String) -> Unit, it: String) {
-        var capital by remember {
-            mutableStateOf("")
-        }
+fun JurosScreen(
+    modifier: Modifier,
+    jurosScreenViewModel: JurosScreenViewModel,
+    it: String
+) {
+//        var capital by remember {
+//            mutableStateOf("")
+//        }
 
-        var taxa by remember {
-            mutableStateOf("")
-        }
+    val capital by jurosScreenViewModel.capital.observeAsState(initial = "")
 
-        var tempo by remember {
-            mutableStateOf("")
-        }
+    val taxa by jurosScreenViewModel.taxa.observeAsState(initial = "")
 
-        var juros by remember {
-            mutableDoubleStateOf(0.0)
-        }
+    val tempo by jurosScreenViewModel.tempo.observeAsState(initial = "")
 
-        var montante by remember {
-            mutableDoubleStateOf(0.0)
-        }
+    val juros by jurosScreenViewModel.juros.observeAsState(initial = 0.0)
+
+    val montante by jurosScreenViewModel.montante.observeAsState(initial = 0.0)
 
         Box {
             Column(
@@ -106,14 +97,16 @@ fun JurosScreen(modifier: Modifier) {
                                     fontWeight = FontWeight.Bold
                                 )
 
-//                            OutlinedTextField(
-//                                value = capital,
-//                                onValueChange = { capital = it },
-//                                modifier = Modifier.fillMaxWidth(),
-//                                label = { Text(text = "Valor investimento") },
-//                                placeholder = { Text(text = "Quanto deseja investir?") },
-//                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
-//                            )
+                            OutlinedTextField(
+                                value = capital,
+                                onValueChange = {
+                                    jurosScreenViewModel.onCapitalChanged(it)
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                label = { Text(text = "Valor investimento") },
+                                placeholder = { Text(text = "Quanto deseja investir?") },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                            )
 
                                 CaixaDeEntrada(
                                     modifier = Modifier.fillMaxWidth(),
@@ -122,7 +115,7 @@ fun JurosScreen(modifier: Modifier) {
                                     keyboardType = KeyboardType.Decimal,
                                     value = capital,
                                     atualizarValor = {
-                                        capital = it
+                                        jurosScreenViewModel.onCapitalChanged(it)
                                     }
                                 )
 
@@ -133,7 +126,7 @@ fun JurosScreen(modifier: Modifier) {
                                     keyboardType = KeyboardType.Decimal,
                                     value = taxa,
                                     atualizarValor = {
-                                        taxa = it
+                                        jurosScreenViewModel.onTaxaChanged(novaTaxa = it)
                                     }
                                 )
 
@@ -144,13 +137,15 @@ fun JurosScreen(modifier: Modifier) {
                                     keyboardType = KeyboardType.Decimal,
                                     value = tempo,
                                     atualizarValor = {
-                                        tempo = it
+                                        jurosScreenViewModel.onTempoChanged(novoTempo = it)
                                     }
                                 )
 
                                 OutlinedTextField(
                                     value = taxa,
-                                    onValueChange = { taxa = it },
+                                    onValueChange = {
+                                        jurosScreenViewModel.onTaxaChanged(it)
+                                    },
                                     modifier = Modifier.fillMaxWidth(),
                                     label = { Text(text = "Taxa de juros mensal") },
                                     placeholder = { Text(text = "Qual a taxa de juros mensal?") },
@@ -159,7 +154,9 @@ fun JurosScreen(modifier: Modifier) {
 
                                 OutlinedTextField(
                                     value = tempo,
-                                    onValueChange = { tempo = it },
+                                    onValueChange = {
+                                        jurosScreenViewModel.onTempoChanged(it)
+                                    },
                                     modifier = Modifier.fillMaxWidth(),
                                     label = { Text(text = "Período em meses") },
                                     placeholder = { Text(text = "Qual o tempo em meses?") },
@@ -168,16 +165,9 @@ fun JurosScreen(modifier: Modifier) {
 
                                 Button(
                                     onClick = {
-                                        juros = calcularJuros(
-                                            capital = capital.toDouble(),
-                                            taxa = taxa.toDouble(),
-                                            tempo = tempo.toDouble()
-                                        )
+                                        jurosScreenViewModel.calcularJurosInvestimento()
 
-                                        montante = calcularMontante(
-                                            capital = capital.toDouble(),
-                                            juros = juros
-                                        )
+                                        jurosScreenViewModel.calcularMontanteInvestimento()
                                     },
                                     modifier = Modifier.fillMaxWidth()
                                         .height(48.dp)
@@ -259,7 +249,5 @@ fun JurosScreen(modifier: Modifier) {
                     }
                 }
             }
-
         }
-    }
 }
